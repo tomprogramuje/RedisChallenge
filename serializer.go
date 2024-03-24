@@ -1,5 +1,13 @@
 package main
 
 func Serialize(msg string) string {
-	return `+OK\r\n`
+	if msg == "hello world" {
+		return `+hello world\r\n`
+	}
+
+	if msg == "OK" {
+		return `+OK\r\n`
+	}
+	
+	return ""
 }

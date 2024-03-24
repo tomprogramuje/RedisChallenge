@@ -1,5 +1,5 @@
 package main
 
 func Serialize(msg string) string {
-	return ""
+	return `+OK\r\n`
 }

@@ -1,5 +1,9 @@
 package main
 
+import "fmt"
+
+const commandEnd = `\r\n`
+
 func Serialize(data any) []string {
 	switch data.(type) {
 	case string:
@@ -12,7 +16,18 @@ func Serialize(data any) []string {
 			return []string{`+OK\r\n`}
 		}
 	case []string:
-		return []string{`*1\r\n$4\r\nping\r\n`}
+		sliceLength := len(data.([]string))
+		dataS := data.([]string)
+	
+		stringLength1 := len(dataS[0])
+		
+
+		if sliceLength == 1 {
+			return []string{`*` + fmt.Sprint(sliceLength) + commandEnd + `$` + fmt.Sprint(stringLength1) + commandEnd + string(dataS[0]) + commandEnd}
+		}
+
+		stringLength2 := len(dataS[1])
+		return []string{`*` + fmt.Sprint(sliceLength) + commandEnd + `$` + fmt.Sprint(stringLength1) + commandEnd + string(dataS[0]) + commandEnd + `$` + fmt.Sprint(stringLength2) + commandEnd + string(dataS[1]) + commandEnd}
 	}
 
 	return []string{}

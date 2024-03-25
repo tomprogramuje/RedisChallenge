@@ -23,6 +23,7 @@ func TestSerialize(t *testing.T) {
 		{"28 gets converted to `:28\r\n`", 28, [1]string{`:28\r\n`}},
 		{"-28 gets converted to `:-28\r\n`", -28, [1]string{`:-28\r\n`}},
 		{"3.14 gets converted to `$4\r\n3.14\r\n`", 3.14, [1]string{`$4\r\n3.14\r\n`}},
+		{"invalid data - map[int]string{1: 'apple'} - returns [1]string{}", map[int]string{1: "apple"}, [1]string{}},
 	}
 
 	for _, test := range cases {

@@ -17,7 +17,8 @@ func TestSerialize(t *testing.T) {
 		{"'hello world' gets converted to `+hello world\r\n`", "hello world", [1]string{`+hello world\r\n`}},
 		{"`[]string{'ping'}` gets converted to '*1\r\n$4\r\nping\r\n'", []string{"ping"}, [1]string{`*1\r\n$4\r\nping\r\n`}},
 		{"'[]string{'echo', 'hello world'}' gets converted to `*2\r\n$4\r\necho\r\n$11\r\nhello world\r\n`", []string{"echo", "hello world"}, [1]string{`*2\r\n$4\r\necho\r\n$11\r\nhello world\r\n`}},
-		{"28 gets converted to `:[+]28\r\n`", 28, [1]string{`:[+]28\r\n`}},
+		{"28 gets converted to `:28\r\n`", 28, [1]string{`:28\r\n`}},
+		{"-28 gets converted to `:-28\r\n`", -28, [1]string{`:-28\r\n`}},
 	}
 
 	for _, test := range cases {

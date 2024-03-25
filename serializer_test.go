@@ -20,6 +20,7 @@ func TestSerialize(t *testing.T) {
 		{"[]int{2, 4} gets converted to `*2\r\n:2\r\n:4\r\n`", []int{2, 4}, [1]string{`*2\r\n:2\r\n:4\r\n`}},
 		{"28 gets converted to `:28\r\n`", 28, [1]string{`:28\r\n`}},
 		{"-28 gets converted to `:-28\r\n`", -28, [1]string{`:-28\r\n`}},
+		{"3.14 gets converted to `$4\r\n3.14\r\n`", 3.14, [1]string{`$4\r\n3.14\r\n`}},
 	}
 
 	for _, test := range cases {

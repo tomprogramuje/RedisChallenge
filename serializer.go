@@ -11,7 +11,7 @@ const (
 	bulkStringType = `$`
 	sliceType      = `*`
 	errorType      = `-`
-	IntType     = `:`
+	IntType        = `:`
 	bulkNull       = `$-1\r\n`
 	arrayNull      = `*-1\r\n`
 )
@@ -47,7 +47,7 @@ func Serialize(data any) [1]string {
 		return [1]string{sliceType + fmt.Sprint(len(d)) + terminator + msg}
 
 	case int:
-		
+
 		return [1]string{IntType + fmt.Sprint(d) + terminator}
 
 	case []int:

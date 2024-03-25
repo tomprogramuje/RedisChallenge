@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -62,6 +63,12 @@ func Serialize(data any) [1]string {
 		msg := msgBuilder.String()
 
 		return [1]string{sliceType + fmt.Sprint(len(d)) + terminator + msg}
+
+	case float64:
+
+		dToString := strconv.FormatFloat(d, 'f', 2, 64)
+		
+		return [1]string{bulkStringType + fmt.Sprint(len(dToString)) + terminator + dToString + terminator}
 
 	default:
 

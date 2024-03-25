@@ -18,6 +18,8 @@ const (
 
 func Serialize(data any) []string {
 	switch d := data.(type) {
+	case nil:
+		return []string{`$-1\r\n`}
 	case string:
 
 		return []string{stringType + d + terminator}

@@ -11,7 +11,8 @@ const (
 	bulkStringType = `$`
 	sliceType      = `*`
 	errorType      = `-`
-	intType        = `:`
+	posIntType     = `:[+]`
+	negIntType     = `:[-]`
 	bulkNull       = `$-1\r\n`
 	arrayNull      = `*-1\r\n`
 )
@@ -43,6 +44,18 @@ func Serialize(data any) [1]string {
 		msg := msgBuilder.String()
 
 		return [1]string{sliceType + fmt.Sprint(len(d)) + terminator + msg}
+
+	case int:
+		
+		if d == 0 {
+			return [1]string{`:0\r\n`}
+		} 
+
+		if d < 0 {
+			return [1]string{negIntType + fmt.Sprint(d) + terminator}
+		}
+
+		return [1]string{posIntType + fmt.Sprint(d) + terminator}
 
 	default:
 

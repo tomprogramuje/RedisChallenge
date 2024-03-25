@@ -5,11 +5,11 @@ import "testing"
 func TestSerialize(t *testing.T) {
 	cases := []struct {
 		Description string
-		Message     string
+		Message     []string
 		Want        string
 	}{
-		{"'OK' gets converted to `+OK\r\n`", "OK", `+OK\r\n`},
-		{"'hello world' gets converted to `+hello world\r\n`", "hello world", `+hello world\r\n`},
+		{"`+OK\r\n` gets converted to 'OK'", []string{`+OK\r\n`}, "OK"},
+		{"`+hello world\r\n` gets converted to 'hello world'", []string{`+hello world\r\n`}, "hello world"},
 	}
 
 	for _, test := range cases {

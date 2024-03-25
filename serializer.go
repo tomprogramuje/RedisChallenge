@@ -10,6 +10,10 @@ const (
 	stringType     = `+`
 	bulkStringType = `$`
 	sliceType      = `*`
+	errorType      = `-`
+	intType        = `:`
+	bulkNull       = `$-1\r\n`
+	arrayNull      = `*-1\r\n`
 )
 
 func Serialize(data any) []string {
@@ -30,8 +34,8 @@ func Serialize(data any) []string {
 			msgBuilder.WriteString(text)
 			msgBuilder.WriteString(terminator)
 		}
-
 		msg := msgBuilder.String()
+
 		return []string{sliceType + fmt.Sprint(len(d)) + terminator + msg}
 
 	default:

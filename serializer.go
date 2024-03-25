@@ -1,11 +1,16 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
-const terminator = `\r\n`
-const stringType = `+`
-const bulkStringType = `$`
-const sliceType = `*`
+const (
+	terminator     = `\r\n`
+	stringType     = `+`
+	bulkStringType = `$`
+	sliceType      = `*`
+)
 
 func Serialize(data any) []string {
 	switch d := data.(type) {
@@ -15,14 +20,18 @@ func Serialize(data any) []string {
 
 	case []string:
 
-		msg := ""
+		var msgBuilder strings.Builder
 
 		for _, text := range d {
 			textLength := fmt.Sprint(len(text))
-			msgPart := bulkStringType + textLength + terminator + text + terminator
-			msg += msgPart
+			msgBuilder.WriteString(bulkStringType)
+			msgBuilder.WriteString(textLength)
+			msgBuilder.WriteString(terminator)
+			msgBuilder.WriteString(text)
+			msgBuilder.WriteString(terminator)
 		}
 
+		msg := msgBuilder.String()
 		return []string{sliceType + fmt.Sprint(len(d)) + terminator + msg}
 
 	default:

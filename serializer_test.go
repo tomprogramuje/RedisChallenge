@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"reflect"
 	"testing"
 )
@@ -22,7 +23,9 @@ func TestSerialize(t *testing.T) {
 		{"[]float64{3.14, 2.19} gets converted to `*2\r\n$4\r\n3.14\r\n$4\r\n2.19\r\n`", []float64{3.14, 2.19}, [1]string{`*2\r\n$4\r\n3.14\r\n$4\r\n2.19\r\n`}},
 		{"28 gets converted to `:28\r\n`", 28, [1]string{`:28\r\n`}},
 		{"-28 gets converted to `:-28\r\n`", -28, [1]string{`:-28\r\n`}},
+		{"-0 gets converted to `:0\r\n`", -0, [1]string{`:0\r\n`}},
 		{"3.14 gets converted to `$4\r\n3.14\r\n`", 3.14, [1]string{`$4\r\n3.14\r\n`}},
+		{"'example error' error gets converted to `-example error\r\n`", errors.New("example error"), [1]string{`-example error\r\n`}},
 		{"invalid data - map[int]string{1: 'apple'} - returns [1]string{}", map[int]string{1: "apple"}, [1]string{}},
 	}
 

@@ -24,6 +24,9 @@ func Serialize(data any) [1]string {
 		
 		return [1]string{`$-1\r\n`}
 
+	case error:
+
+		return [1]string{errorType + d.Error() + terminator}
 
 	case string:
 

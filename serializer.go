@@ -7,21 +7,22 @@ import (
 )
 
 const (
-	terminator     = `\r\n`
-	stringType     = `+`
-	bulkStringType = `$`
-	sliceType      = `*`
-	errorType      = `-`
-	IntType        = `:`
-	bulkNull       = `$-1\r\n`
-	arrayNull      = `*-1\r\n`
+	terminator                = `\r\n`
+	stringType                = `+`
+	bulkStringType            = `$`
+	sliceType                 = `*`
+	errorType                 = `-`
+	IntType                   = `:`
+	bulkNull                  = `$-1\r\n`
+	arrayNull                 = `*-1\r\n`
+	simpleStringByteThreshold = 20
 )
 
 func Serialize(data any) [1]string {
 	switch d := data.(type) {
 
 	case nil:
-		
+
 		return [1]string{`$-1\r\n`}
 
 	case error:

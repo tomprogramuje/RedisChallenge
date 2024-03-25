@@ -25,6 +25,10 @@ func Serialize(data any) [1]string {
 
 	case string:
 
+		if d == "" {
+			return [1]string{`$0\r\n\r\n`}
+		}
+
 		return [1]string{stringType + d + terminator}
 
 	case []string:

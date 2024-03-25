@@ -2,35 +2,33 @@ package main
 
 import "fmt"
 
-const commandEnd = `\r\n`
+const terminator = `\r\n`
+const stringType = `+`
+const bulkStringType = `$`
+const sliceType = `*`
 
 func Serialize(data any) []string {
-	switch data.(type) {
+	switch d := data.(type) {
 	case string:
 
-		if data == "hello world" {
-			return []string{`+hello world\r\n`}
-		}
+		return []string{stringType + d + terminator}
 
-		if data == "OK" {
-			return []string{`+OK\r\n`}
-		}
 	case []string:
-		sliceLength := len(data.([]string))
-		dataS := data.([]string)
-	
-		stringLength1 := len(dataS[0])
-		
 
-		if sliceLength == 1 {
-			return []string{`*` + fmt.Sprint(sliceLength) + commandEnd + `$` + fmt.Sprint(stringLength1) + commandEnd + string(dataS[0]) + commandEnd}
+		msg := ""
+
+		for _, text := range d {
+			textLength := fmt.Sprint(len(text))
+			msgPart := bulkStringType + textLength + terminator + text + terminator
+			msg += msgPart
 		}
 
-		stringLength2 := len(dataS[1])
-		return []string{`*` + fmt.Sprint(sliceLength) + commandEnd + `$` + fmt.Sprint(stringLength1) + commandEnd + string(dataS[0]) + commandEnd + `$` + fmt.Sprint(stringLength2) + commandEnd + string(dataS[1]) + commandEnd}
-	}
+		return []string{sliceType + fmt.Sprint(len(d)) + terminator + msg}
 
-	return []string{}
+	default:
+
+		return []string{}
+	}
 }
 
 // func Deserialize(msg []string) any {}

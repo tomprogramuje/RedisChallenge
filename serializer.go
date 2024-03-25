@@ -1,15 +1,17 @@
 package main
 
-import "slices"
-
-func Serialize(msg []string) string {
-	if slices.Equal(msg, []string{`+hello world\r\n`}) {
-		return "hello world"
+func Serialize(data any) []string {
+	
+	if data == "hello world" {
+		return []string{`+hello world\r\n`}
 	}
 
-	if slices.Equal(msg, []string{`+OK\r\n`}) {
-		return "OK"
+	if data == "OK" {
+		return []string{`+OK\r\n`}
 	}
 	
-	return ""
+	return []string{}
 }
+
+
+// func Deserialize(msg []string) any {}

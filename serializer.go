@@ -26,6 +26,10 @@ func Serialize(data any) []string {
 
 	case []string:
 
+		if len(d) == 0 {
+			return []string{`*-1\r\n`}
+		}
+
 		var msgBuilder strings.Builder
 
 		for _, text := range d {

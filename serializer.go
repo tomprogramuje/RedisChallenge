@@ -16,18 +16,18 @@ const (
 	arrayNull      = `*-1\r\n`
 )
 
-func Serialize(data any) []string {
+func Serialize(data any) [1]string {
 	switch d := data.(type) {
 	case nil:
-		return []string{`$-1\r\n`}
+		return [1]string{`$-1\r\n`}
 	case string:
 
-		return []string{stringType + d + terminator}
+		return [1]string{stringType + d + terminator}
 
 	case []string:
 
 		if len(d) == 0 {
-			return []string{`*-1\r\n`}
+			return [1]string{`*-1\r\n`}
 		}
 
 		var msgBuilder strings.Builder
@@ -42,11 +42,11 @@ func Serialize(data any) []string {
 		}
 		msg := msgBuilder.String()
 
-		return []string{sliceType + fmt.Sprint(len(d)) + terminator + msg}
+		return [1]string{sliceType + fmt.Sprint(len(d)) + terminator + msg}
 
 	default:
 
-		return []string{}
+		return [1]string{}
 	}
 }
 

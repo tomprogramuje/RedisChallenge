@@ -53,6 +53,10 @@ func Serialize(data any) [1]string {
 
 	case []int:
 
+		if len(d) == 0 {
+			return [1]string{`*-1\r\n`}
+		}
+
 		var msgBuilder strings.Builder
 
 		for _, num := range d {
@@ -67,8 +71,34 @@ func Serialize(data any) [1]string {
 	case float64:
 
 		dToString := strconv.FormatFloat(d, 'f', 2, 64)
-		
+
 		return [1]string{bulkStringType + fmt.Sprint(len(dToString)) + terminator + dToString + terminator}
+
+	case []float64:
+
+		if len(d) == 0 {
+			return [1]string{`*-1\r\n`}
+		}
+
+		convSlice := []string{}
+		for _, num := range d {
+			dToString := strconv.FormatFloat(num, 'f', 2, 64)
+			convSlice = append(convSlice, dToString)
+		}
+
+		var msgBuilder strings.Builder
+
+		for _, flNum := range convSlice {
+			textLength := fmt.Sprint(len(flNum))
+			msgBuilder.WriteString(bulkStringType)
+			msgBuilder.WriteString(textLength)
+			msgBuilder.WriteString(terminator)
+			msgBuilder.WriteString(flNum)
+			msgBuilder.WriteString(terminator)
+		}
+		msg := msgBuilder.String()
+
+		return [1]string{sliceType + fmt.Sprint(len(convSlice)) + terminator + msg}
 
 	default:
 

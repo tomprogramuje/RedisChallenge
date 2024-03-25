@@ -11,6 +11,7 @@ func TestSerialize(t *testing.T) {
 		Data        any
 		Want        []string
 	}{
+		{"nil gets converted to `$-1\r\n`", nil, []string{`$-1\r\n`}},
 		{"'OK' gets converted to `+OK\r\n`", "OK", []string{`+OK\r\n`}},
 		{"'hello world' gets converted to `+hello world\r\n`", "hello world", []string{`+hello world\r\n`}},
 		{"`[]string{'ping'}` gets converted to '*1\r\n$4\r\nping\r\n'", []string{"ping"}, []string{`*1\r\n$4\r\nping\r\n`}},

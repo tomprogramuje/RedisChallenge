@@ -35,6 +35,11 @@ func Serialize(data any) [1]string {
 			return [1]string{`$0\r\n\r\n`}
 		}
 
+		if strings.Contains(d, `\r\n`) || len([]byte(d)) > simpleStringByteThreshold {
+
+			return [1]string{bulkStringType + fmt.Sprint(len([]byte(d))) + terminator + d + terminator}
+		}
+
 		return [1]string{stringType + d + terminator}
 
 	case []string:

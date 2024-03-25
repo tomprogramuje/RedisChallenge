@@ -18,7 +18,7 @@ const (
 
 func Serialize(data any) [1]string {
 	switch d := data.(type) {
-		
+
 	case nil:
 		return [1]string{`$-1\r\n`}
 
@@ -49,6 +49,19 @@ func Serialize(data any) [1]string {
 	case int:
 		
 		return [1]string{IntType + fmt.Sprint(d) + terminator}
+
+	case []int:
+
+		var msgBuilder strings.Builder
+
+		for _, num := range d {
+			msgBuilder.WriteString(IntType)
+			msgBuilder.WriteString(fmt.Sprint(num))
+			msgBuilder.WriteString(terminator)
+		}
+		msg := msgBuilder.String()
+
+		return [1]string{sliceType + fmt.Sprint(len(d)) + terminator + msg}
 
 	default:
 

@@ -120,5 +120,3 @@ func Serialize(data any) [1]string {
 		return [1]string{}
 	}
 }
-
-// func Deserialize(msg []string) any {}

@@ -12,13 +12,14 @@ func TestDeserialize(t *testing.T) {
 		Want any
 	}{
 		{"`$-1\r\n` gets converted to nil", [1]string{`$-1\r\n`}, nil},
+		{"`+OK\r\n` gets converted to 'OK'", [1]string{`+OK\r\n`}, "OK"},
 	}
 
 	for _, test := range cases {
 		t.Run(test.Description, func(t *testing.T) {
 			got := Deserialize(test.Message)
 			if !reflect.DeepEqual(got, test.Want) {
-				t.Error("failed conversion, got", got, "doesn't equal want", test.Want)
+				t.Error("failed conversion,", got, "doesn't equal", test.Want)
 			}
 		})
 	}

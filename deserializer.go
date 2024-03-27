@@ -10,7 +10,7 @@ func Deserialize(msg [1]string) any {
 	dataType := string(msg[0][0])
 
 	switch dataType {
-		
+
 	case "+":
 		withoutPrefix, _ := strings.CutPrefix(msg[0], `+`)
 		string, _ := strings.CutSuffix(withoutPrefix, `\r\n`)
@@ -19,13 +19,20 @@ func Deserialize(msg [1]string) any {
 
 	case "$":
 		withoutPrefix, _ := strings.CutPrefix(msg[0], `$`)
-		bulkString, _ := strings.CutSuffix(withoutPrefix, `\r\n`)
+		withoutSuffix, _ := strings.CutSuffix(withoutPrefix, `\r\n`)
 
-		if bulkString == "-1" {
+		if withoutSuffix == "-1" {
 			return nil
 		}
 
-		return bulkString
+		_, bulkString, _ := strings.Cut(withoutSuffix, `\r\n`)
+
+		float, err := strconv.ParseFloat(bulkString, 64)
+		if err != nil {
+			return bulkString
+		}
+
+		return float
 
 	case ":":
 		withoutPrefix, _ := strings.CutPrefix(msg[0], `:`)

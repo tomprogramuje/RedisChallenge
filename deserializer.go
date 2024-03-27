@@ -11,13 +11,13 @@ func Deserialize(msg [1]string) any {
 
 	switch dataType {
 
-	case "+":
+	case stringType:
 		withoutPrefix, _ := strings.CutPrefix(msg[0], `+`)
 		string, _ := strings.CutSuffix(withoutPrefix, `\r\n`)
 
 		return string
 
-	case "$":
+	case bulkStringType:
 		withoutPrefix, _ := strings.CutPrefix(msg[0], `$`)
 		withoutSuffix, _ := strings.CutSuffix(withoutPrefix, `\r\n`)
 
@@ -34,7 +34,7 @@ func Deserialize(msg [1]string) any {
 
 		return float
 
-	case ":":
+	case IntType:
 		withoutPrefix, _ := strings.CutPrefix(msg[0], `:`)
 		withoutSuffix, _ := strings.CutSuffix(withoutPrefix, `\r\n`)
 

@@ -13,6 +13,7 @@ func TestDeserialize(t *testing.T) {
 	}{
 		{"`$-1\r\n` gets converted to nil", [1]string{`$-1\r\n`}, nil},
 		{"`+OK\r\n` gets converted to 'OK'", [1]string{`+OK\r\n`}, "OK"},
+		{"`$14\r\nhello, guy 67.2` gets converted to ''hello, guy 67.2", [1]string{`$14\r\nhello, guy 67.2`}, "hello, guy 67.2"},
 		{"`:28\r\n` gets converted to 28", [1]string{`:28\r\n`}, 28},
 		{"`$4\r\n3.14\r\n` gets converted to 3.14", [1]string{`$4\r\n3.14\r\n`}, 3.14},
 	}

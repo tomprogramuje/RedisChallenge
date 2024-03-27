@@ -10,6 +10,7 @@ func Deserialize(msg [1]string) any {
 	dataType := string(msg[0][0])
 
 	switch dataType {
+		
 	case "+":
 		withoutPrefix, _ := strings.CutPrefix(msg[0], `+`)
 		string, _ := strings.CutSuffix(withoutPrefix, `\r\n`)

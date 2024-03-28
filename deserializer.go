@@ -7,25 +7,24 @@ import (
 
 func Deserialize(msg [1]string) any {
 
-	dataType := string(msg[0][0])
+	withoutSuffix, _ := strings.CutSuffix(msg[0], `\r\n`)
+	dataType := string(withoutSuffix[0])
 
 	switch dataType {
 
 	case stringType:
-		withoutPrefix, _ := strings.CutPrefix(msg[0], `+`)
-		string, _ := strings.CutSuffix(withoutPrefix, `\r\n`)
+		string, _ := strings.CutPrefix(withoutSuffix, `+`)
 
 		return string
 
 	case bulkStringType:
-		withoutPrefix, _ := strings.CutPrefix(msg[0], `$`)
-		withoutSuffix, _ := strings.CutSuffix(withoutPrefix, `\r\n`)
+		withoutPrefix, _ := strings.CutPrefix(withoutSuffix, `$`)
 
-		if withoutSuffix == "-1" {
+		if withoutPrefix == "-1" {
 			return nil
 		}
 
-		_, bulkString, _ := strings.Cut(withoutSuffix, `\r\n`)
+		_, bulkString, _ := strings.Cut(withoutPrefix, `\r\n`)
 
 		float, err := strconv.ParseFloat(bulkString, 64)
 		if err != nil {
@@ -35,10 +34,9 @@ func Deserialize(msg [1]string) any {
 		return float
 
 	case IntType:
-		withoutPrefix, _ := strings.CutPrefix(msg[0], `:`)
-		withoutSuffix, _ := strings.CutSuffix(withoutPrefix, `\r\n`)
+		withoutPrefix, _ := strings.CutPrefix(withoutSuffix, `:`)
 
-		number, _ := strconv.Atoi(withoutSuffix)
+		number, _ := strconv.Atoi(withoutPrefix)
 
 		return number
 

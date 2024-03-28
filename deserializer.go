@@ -11,7 +11,11 @@ func Deserialize(msg [1]string) any {
 		return nil
 	}
 
-	withoutSuffix, _ := strings.CutSuffix(msg[0], terminator)
+	withoutSuffix, found := strings.CutSuffix(msg[0], terminator)
+	if !found {
+		return nil
+	}
+
 	dataType := string(withoutSuffix[0])
 
 	switch dataType {

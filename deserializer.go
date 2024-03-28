@@ -7,6 +7,10 @@ import (
 
 func Deserialize(msg [1]string) any {
 
+	if msg[0] == bulkNull || msg[0] == arrayNull {
+		return nil
+	}
+
 	withoutSuffix, _ := strings.CutSuffix(msg[0], terminator)
 	dataType := string(withoutSuffix[0])
 
@@ -19,10 +23,6 @@ func Deserialize(msg [1]string) any {
 
 	case bulkStringType:
 		withoutPrefix, _ := strings.CutPrefix(withoutSuffix, bulkStringType)
-
-		if withoutPrefix == "-1" {
-			return nil
-		}
 
 		_, bulkString, _ := strings.Cut(withoutPrefix, terminator)
 

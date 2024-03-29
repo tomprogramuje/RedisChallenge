@@ -48,26 +48,30 @@ func Deserialize(msg [1]string) any {
 		numOfElem, _ := strconv.Atoi(pre)
 
 		if string(data[0]) == IntType {
-			slice := make([]int, 0)
+			sliceOfInt := make([]int, 0)
 			for i := 0; i < numOfElem; i++ {
 				withoutIntPrefix, _ := strings.CutPrefix(data, IntType)
-				ele, rest, _ := strings.Cut(withoutIntPrefix, terminator)
-				num, _ := strconv.Atoi(ele)
-				slice = append(slice, num)
-				data = rest  
+				elem, rest, _ := strings.Cut(withoutIntPrefix, terminator)
+				num, err := strconv.Atoi(elem)
+				if err != nil {
+					return err
+				}
+
+				sliceOfInt = append(sliceOfInt, num)
+				data = rest
 			}
 
-			return slice
+			return sliceOfInt
 		} else {
-			slice := make([]string, 0)
+			sliceOfStrings := make([]string, 0)
 			for i := 0; i < numOfElem; i++ {
 				_, withoutLenght, _ := strings.Cut(data, terminator)
 				cleanElem, rest, _ := strings.Cut(withoutLenght, terminator)
-				slice = append(slice, cleanElem)
-				data = rest			
+				sliceOfStrings = append(sliceOfStrings, cleanElem)
+				data = rest
 			}
 
-			return slice
+			return sliceOfStrings
 		}
 
 	case IntType:

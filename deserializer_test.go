@@ -27,7 +27,7 @@ func TestDeserialize(t *testing.T) {
 		{"`:-0\r\n` gets converted to 0", [1]string{`:-0\r\n`}, 0},
 		{"`*2\r\n:2\r\n:4\r\n` gets converted to []int{2, 4}", [1]string{`*2\r\n:2\r\n:4\r\n`}, []int{2, 4}},
 		{"`-example error\r\n` error gets converted to 'example error'", [1]string{`-example error\r\n`}, errors.New("example error")},
-		{"invalid data - [1]string{`sdkjhfgj`} - returns nil", [1]string{`sdkjhfgj`}, nil},
+		{"invalid message - [1]string{`sdkjhfgj`} - returns nil", [1]string{`sdkjhfgj`}, nil},
 	}
 
 	for _, test := range cases {

@@ -18,7 +18,7 @@ func TestSerialize(t *testing.T) {
 		{"'OK' gets converted to `+OK\r\n`", "OK", [1]string{`+OK\r\n`}},
 		{"'hello world' gets converted to `+hello world\r\n`", "hello world", [1]string{`+hello world\r\n`}},
 		{"'hi\r\nhow are you?' gets converted to `$18\r\nhi\r\nhow are you?\r\n`", `hi\r\nhow are you?`, [1]string{`$18\r\nhi\r\nhow are you?\r\n`}},
-		{"`[]string{'ping'}` gets converted to '*1\r\n$4\r\nping\r\n'", []string{"ping"}, [1]string{`*1\r\n$4\r\nping\r\n`}},
+		{"`[]string{'ping'}` gets converted to `*1\r\n$4\r\nping\r\n`", []string{"ping"}, [1]string{`*1\r\n$4\r\nping\r\n`}},
 		{"'[]string{'echo', 'hello world'}' gets converted to `*2\r\n$4\r\necho\r\n$11\r\nhello world\r\n`", []string{"echo", "hello world"}, [1]string{`*2\r\n$4\r\necho\r\n$11\r\nhello world\r\n`}},
 		{"[]int{2, 4} gets converted to `*2\r\n:2\r\n:4\r\n`", []int{2, 4}, [1]string{`*2\r\n:2\r\n:4\r\n`}},
 		{"[]float64{3.14, 2.19} gets converted to `*2\r\n$4\r\n3.14\r\n$4\r\n2.19\r\n`", []float64{3.14, 2.19}, [1]string{`*2\r\n$4\r\n3.14\r\n$4\r\n2.19\r\n`}},

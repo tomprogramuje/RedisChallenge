@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 )
@@ -20,6 +21,11 @@ func Deserialize(msg [1]string) any {
 
 	switch dataType {
 
+	case errorType:
+		err, _ := strings.CutPrefix(withoutSuffix, errorType)
+
+		return errors.New(err)
+
 	case stringType:
 		string, _ := strings.CutPrefix(withoutSuffix, stringType)
 
@@ -27,7 +33,6 @@ func Deserialize(msg [1]string) any {
 
 	case bulkStringType:
 		withoutPrefix, _ := strings.CutPrefix(withoutSuffix, bulkStringType)
-
 		_, bulkString, _ := strings.Cut(withoutPrefix, terminator)
 
 		float, err := strconv.ParseFloat(bulkString, 64)
@@ -36,6 +41,34 @@ func Deserialize(msg [1]string) any {
 		}
 
 		return float
+
+	case sliceType:
+		withoutPrefix, _ := strings.CutPrefix(withoutSuffix, sliceType)
+		pre, data, _ := strings.Cut(withoutPrefix, terminator)
+		numOfElem, _ := strconv.Atoi(pre)
+
+		if string(data[0]) == IntType {
+			slice := make([]int, 0)
+			for i := 0; i < numOfElem; i++ {
+				withoutIntPrefix, _ := strings.CutPrefix(data, IntType)
+				ele, rest, _ := strings.Cut(withoutIntPrefix, terminator)
+				num, _ := strconv.Atoi(ele)
+				slice = append(slice, num)
+				data = rest  
+			}
+
+			return slice
+		} else {
+			slice := make([]string, 0)
+			for i := 0; i < numOfElem; i++ {
+				_, withoutLenght, _ := strings.Cut(data, terminator)
+				cleanElem, rest, _ := strings.Cut(withoutLenght, terminator)
+				slice = append(slice, cleanElem)
+				data = rest			
+			}
+
+			return slice
+		}
 
 	case IntType:
 		withoutPrefix, _ := strings.CutPrefix(withoutSuffix, IntType)

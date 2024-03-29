@@ -14,7 +14,7 @@ func TestDeserialize(t *testing.T) {
 	}{
 		{"`$-1\r\n` gets converted to nil", [1]string{`$-1\r\n`}, nil},
 		{"`$0\r\n\r\n` gets converted to ''", [1]string{`$0\r\n\r\n`}, ""},
-		{"`*-1\r\n` gets converted to []string{}", [1]string{`*-1\r\n`}, []string{}},
+		{"`*-1\r\n` gets converted to nil", [1]string{`*-1\r\n`}, nil},
 		{"`+OK\r\n` gets converted to 'OK'", [1]string{`+OK\r\n`}, "OK"},
 		{"`+hello world\r\n` gets converted to 'hello world'", [1]string{`+hello world\r\n`}, "hello world"},
 		{"`$18\r\nhi\r\nhow are you?\r\n` gets converted to 'hi\r\nhow are you?'", [1]string{`$18\r\nhi\r\nhow are you?\r\n`}, `hi\r\nhow are you?`},

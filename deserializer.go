@@ -46,7 +46,7 @@ func Deserialize(msg string) any {
 func getDataType(msg string) (dataType, msgWithoutSuffix string) {
 	msgWithoutSuffix, found := strings.CutSuffix(msg, terminator)
 	if !found {
-		return "", ""
+		return "invalid data", ""
 	}
 	dataType = string(msgWithoutSuffix[0])
 

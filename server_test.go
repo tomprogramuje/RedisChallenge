@@ -30,7 +30,6 @@ func TestServer(t *testing.T) {
 
 		response, _ := bufio.NewReader(conn).ReadString('\n')
 		got := Deserialize([1]string{response})
-		fmt.Println(got)
 		want := "PONG"
 
 		if got != want {

@@ -18,7 +18,9 @@ func establishConnection() (err error) {
 		}
 
 		go func(c net.Conn) {
-			conn.Close()
+			defer c.Close()
+			msg := Serialize("PONG")
+			c.Write([]byte(msg[0]))
 		}(conn)
 	}
 }

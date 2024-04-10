@@ -1,23 +1,24 @@
 package main
 
 import (
-	"errors"
+	"log"
 	"net"
 )
 
 func establishConnection() (err error) {
-	server, err := net.Listen("tcp", ":5678")
+	l, err := net.Listen("tcp", ":5678")
 	if err != nil {
 		return
 	}
+	defer l.Close()
 	for {
-		conn, err := server.Accept()
+		conn, err := l.Accept()
 		if err != nil {
-			return errors.New("could not accept connection")
+			log.Fatal(err)
 		}
-		if conn == nil {
-			return errors.New("could not create connection")
-		}
-		conn.Close()
+
+		go func(c net.Conn) {
+			conn.Close()
+		}(conn)
 	}
 }

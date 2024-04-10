@@ -7,45 +7,45 @@ import (
 )
 
 const (
-	terminator                = `\r\n`
-	stringType                = `+`
-	bulkStringType            = `$`
-	sliceType                 = `*`
-	errorType                 = `-`
-	IntType                   = `:`
-	bulkNull                  = `$-1\r\n`
-	arrayNull                 = `*-1\r\n`
+	terminator                = "\r\n"
+	stringType                = "+"
+	bulkStringType            = "$"
+	sliceType                 = "*"
+	errorType                 = "-"
+	IntType                   = ":"
+	bulkNull                  = "$-1\r\n"
+	arrayNull                 = "*-1\r\n"
 	simpleStringByteThreshold = 20
 )
 
-func Serialize(data any) [1]string {
+func Serialize(data any) string {
 	switch d := data.(type) {
 
 	case nil:
 
-		return [1]string{`$-1\r\n`}
+		return "$-1\r\n"
 
 	case error:
 
-		return [1]string{errorType + d.Error() + terminator}
+		return errorType + d.Error() + terminator
 
 	case string:
 
 		if d == "" {
-			return [1]string{`$0\r\n\r\n`}
+			return "$0\r\n\r\n"
 		}
 
-		if strings.Contains(d, `\r\n`) || len([]byte(d)) > simpleStringByteThreshold {
+		if strings.Contains(d, "\r\n") || len([]byte(d)) > simpleStringByteThreshold {
 
-			return [1]string{bulkStringType + fmt.Sprint(len([]byte(d))) + terminator + d + terminator}
+			return bulkStringType + fmt.Sprint(len([]byte(d))) + terminator + d + terminator
 		}
 
-		return [1]string{stringType + d + terminator}
+		return stringType + d + terminator
 
 	case []string:
 
 		if len(d) == 0 {
-			return [1]string{`*-1\r\n`}
+			return "*-1\r\n"
 		}
 
 		var msgBuilder strings.Builder
@@ -60,16 +60,16 @@ func Serialize(data any) [1]string {
 		}
 		msg := msgBuilder.String()
 
-		return [1]string{sliceType + fmt.Sprint(len(d)) + terminator + msg}
+		return sliceType + fmt.Sprint(len(d)) + terminator + msg
 
 	case int:
 
-		return [1]string{IntType + fmt.Sprint(d) + terminator}
+		return IntType + fmt.Sprint(d) + terminator
 
 	case []int:
 
 		if len(d) == 0 {
-			return [1]string{`*-1\r\n`}
+			return "*-1\r\n"
 		}
 
 		var msgBuilder strings.Builder
@@ -81,18 +81,18 @@ func Serialize(data any) [1]string {
 		}
 		msg := msgBuilder.String()
 
-		return [1]string{sliceType + fmt.Sprint(len(d)) + terminator + msg}
+		return sliceType + fmt.Sprint(len(d)) + terminator + msg
 
 	case float64:
 
 		dToString := strconv.FormatFloat(d, 'f', 2, 64)
 
-		return [1]string{bulkStringType + fmt.Sprint(len(dToString)) + terminator + dToString + terminator}
+		return bulkStringType + fmt.Sprint(len(dToString)) + terminator + dToString + terminator
 
 	case []float64:
 
 		if len(d) == 0 {
-			return [1]string{`*-1\r\n`}
+			return "*-1\r\n"
 		}
 
 		convSlice := []string{}
@@ -113,10 +113,10 @@ func Serialize(data any) [1]string {
 		}
 		msg := msgBuilder.String()
 
-		return [1]string{sliceType + fmt.Sprint(len(convSlice)) + terminator + msg}
+		return sliceType + fmt.Sprint(len(convSlice)) + terminator + msg
 
 	default:
 
-		return [1]string{}
+		return "invalid data"
 	}
 }

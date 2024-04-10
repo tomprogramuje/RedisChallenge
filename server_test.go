@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"net"
 	"testing"
 	"time"
@@ -24,12 +23,12 @@ func TestServer(t *testing.T) {
 		defer conn.Close()
 
 		cmd := Serialize("PING")
-		if _, err := conn.Write([]byte(cmd[0])); err != nil {
+		if _, err := conn.Write([]byte(cmd)); err != nil {
 			t.Error("could not write to TCP server")
 		}
 
 		response, _ := bufio.NewReader(conn).ReadString('\n')
-		got := Deserialize([1]string{response})
+		got := Deserialize(response)
 		want := "PONG"
 
 		if got != want {

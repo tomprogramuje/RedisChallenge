@@ -6,13 +6,13 @@ import (
 	"strings"
 )
 
-func Deserialize(msg [1]string) any {
+func Deserialize(msg string) any {
 
-	if msg[0] == bulkNull || msg[0] == arrayNull {
+	if msg == bulkNull || msg == arrayNull {
 		return nil
 	}
 
-	withoutSuffix, found := strings.CutSuffix(msg[0], terminator)
+	withoutSuffix, found := strings.CutSuffix(msg, terminator)
 	if !found {
 		return nil
 	}

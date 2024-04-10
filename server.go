@@ -20,7 +20,7 @@ func establishConnection() (err error) {
 		go func(c net.Conn) {
 			defer c.Close()
 			msg := Serialize("PONG")
-			c.Write([]byte(msg[0]))
+			c.Write([]byte(msg))
 		}(conn)
 	}
 }

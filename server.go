@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"errors"
-	"fmt"
 	"log"
 	"net"
 	"os"
@@ -37,7 +36,6 @@ func establishConnection() (err error) {
 				}
 			} else {
 				data := Deserialize(reader).(string)
-				fmt.Println(data)
 				if data == "PING" {
 					msg := Serialize("PONG")
 					c.Write([]byte(msg))

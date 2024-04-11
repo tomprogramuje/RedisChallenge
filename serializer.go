@@ -31,36 +31,11 @@ func Serialize(data any) string {
 
 	case string:
 
-		if d == "" {
-			return "$0\r\n\r\n"
-		}
-
-		if strings.Contains(d, "\r\n") || len([]byte(d)) > simpleStringByteThreshold {
-
-			return bulkStringType + fmt.Sprint(len([]byte(d))) + terminator + d + terminator
-		}
-
-		return stringType + d + terminator
+		return serializeStringType(d)
 
 	case []string:
 
-		if len(d) == 0 {
-			return "*-1\r\n"
-		}
-
-		var msgBuilder strings.Builder
-
-		for _, text := range d {
-			textLength := fmt.Sprint(len(text))
-			msgBuilder.WriteString(bulkStringType)
-			msgBuilder.WriteString(textLength)
-			msgBuilder.WriteString(terminator)
-			msgBuilder.WriteString(text)
-			msgBuilder.WriteString(terminator)
-		}
-		msg := msgBuilder.String()
-
-		return sliceType + fmt.Sprint(len(d)) + terminator + msg
+		return serializeStringSlices(d)
 
 	case int:
 
@@ -68,55 +43,100 @@ func Serialize(data any) string {
 
 	case []int:
 
-		if len(d) == 0 {
-			return "*-1\r\n"
-		}
-
-		var msgBuilder strings.Builder
-
-		for _, num := range d {
-			msgBuilder.WriteString(IntType)
-			msgBuilder.WriteString(fmt.Sprint(num))
-			msgBuilder.WriteString(terminator)
-		}
-		msg := msgBuilder.String()
-
-		return sliceType + fmt.Sprint(len(d)) + terminator + msg
+		return serializeIntSlices(d)
 
 	case float64:
 
-		dToString := strconv.FormatFloat(d, 'f', 2, 64)
-
-		return bulkStringType + fmt.Sprint(len(dToString)) + terminator + dToString + terminator
+		return serializeFloatType(d)
 
 	case []float64:
 
-		if len(d) == 0 {
-			return "*-1\r\n"
-		}
-
-		convSlice := []string{}
-		for _, num := range d {
-			dToString := strconv.FormatFloat(num, 'f', 2, 64)
-			convSlice = append(convSlice, dToString)
-		}
-
-		var msgBuilder strings.Builder
-
-		for _, flNum := range convSlice {
-			textLength := fmt.Sprint(len(flNum))
-			msgBuilder.WriteString(bulkStringType)
-			msgBuilder.WriteString(textLength)
-			msgBuilder.WriteString(terminator)
-			msgBuilder.WriteString(flNum)
-			msgBuilder.WriteString(terminator)
-		}
-		msg := msgBuilder.String()
-
-		return sliceType + fmt.Sprint(len(convSlice)) + terminator + msg
+		return serializeFloatSlices(d)
 
 	default:
 
 		return "invalid data"
 	}
+}
+
+func serializeStringType(d string) string {
+	if d == "" {
+		return "$0\r\n\r\n"
+	}
+
+	if strings.Contains(d, "\r\n") || len([]byte(d)) > simpleStringByteThreshold {
+
+		return bulkStringType + fmt.Sprint(len([]byte(d))) + terminator + d + terminator
+	}
+
+	return stringType + d + terminator
+}
+
+func serializeStringSlices(d []string) string {
+	if len(d) == 0 {
+		return "*-1\r\n"
+	}
+
+	var msgBuilder strings.Builder
+
+	for _, text := range d {
+		textLength := fmt.Sprint(len(text))
+		msgBuilder.WriteString(bulkStringType)
+		msgBuilder.WriteString(textLength)
+		msgBuilder.WriteString(terminator)
+		msgBuilder.WriteString(text)
+		msgBuilder.WriteString(terminator)
+	}
+	msg := msgBuilder.String()
+
+	return sliceType + fmt.Sprint(len(d)) + terminator + msg
+}
+
+func serializeIntSlices(d []int) string {
+	if len(d) == 0 {
+		return "*-1\r\n"
+	}
+
+	var msgBuilder strings.Builder
+
+	for _, num := range d {
+		msgBuilder.WriteString(IntType)
+		msgBuilder.WriteString(fmt.Sprint(num))
+		msgBuilder.WriteString(terminator)
+	}
+	msg := msgBuilder.String()
+
+	return sliceType + fmt.Sprint(len(d)) + terminator + msg
+}
+
+func serializeFloatType(d float64) string {
+	dToString := strconv.FormatFloat(d, 'f', 2, 64)
+
+	return bulkStringType + fmt.Sprint(len(dToString)) + terminator + dToString + terminator
+}
+
+func serializeFloatSlices(d []float64) string {
+	if len(d) == 0 {
+		return "*-1\r\n"
+	}
+
+	convSlice := []string{}
+	for _, num := range d {
+		dToString := strconv.FormatFloat(num, 'f', 2, 64)
+		convSlice = append(convSlice, dToString)
+	}
+
+	var msgBuilder strings.Builder
+
+	for _, flNum := range convSlice {
+		textLength := fmt.Sprint(len(flNum))
+		msgBuilder.WriteString(bulkStringType)
+		msgBuilder.WriteString(textLength)
+		msgBuilder.WriteString(terminator)
+		msgBuilder.WriteString(flNum)
+		msgBuilder.WriteString(terminator)
+	}
+	msg := msgBuilder.String()
+
+	return sliceType + fmt.Sprint(len(convSlice)) + terminator + msg
 }

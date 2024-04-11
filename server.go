@@ -28,16 +28,14 @@ func establishConnection() (err error) {
 			if err != nil {
 				log.Println(err)
 			}
+			if strings.HasPrefix(reader, "*1") || strings.HasPrefix(reader, "+"){
+				msg := Serialize("PONG")
+				c.Write([]byte(msg))
+			}
 			if strings.HasPrefix(reader, "*") {
 				data := Deserialize(reader).([]string)
 				if data[0] == "ECHO" {
 					msg := Serialize(data[1])
-					c.Write([]byte(msg))
-				}
-			} else {
-				data := Deserialize(reader).(string)
-				if data == "PING" {
-					msg := Serialize("PONG")
 					c.Write([]byte(msg))
 				}
 			}

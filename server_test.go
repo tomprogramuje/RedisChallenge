@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net"
 	"testing"
 	"time"
@@ -28,6 +27,7 @@ func TestServer(t *testing.T) {
 		}
 		time.Sleep(time.Millisecond * 50)
 		response, _ := readMessage(conn)
+		
 		got := Deserialize(response)
 		want := "PONG"
 
@@ -51,9 +51,8 @@ func TestServer(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		fmt.Println("response", response)
+
 		got := Deserialize(response)
-		fmt.Println("got", got)
 		want := "Hello World!"
 
 		if got != want {

@@ -35,4 +35,23 @@ func TestServer(t *testing.T) {
 			t.Errorf("got %s want %s", got, want)
 		}
 	})
+	t.Run("returns message back after sending ECHO command", func(t *testing.T) {
+		conn, err := net.Dial("tcp", ":5678")
+		if err != nil {
+			t.Error("could not connect to server: ", err)
+		}
+		defer conn.Close()
+
+		cmd := Serialize("ECHO Hello World!")
+		if _, err := conn.Write([]byte(cmd)); err != nil {
+			t.Error("could not write to TCP server")
+		}
+		response, _ := bufio.NewReader(conn).ReadString('\n')
+		got := Deserialize(response)
+		want := "Hello World!"
+
+		if got != want {
+			t.Errorf("got %s want %s", got, want)
+		}
+	})
 }

@@ -30,19 +30,19 @@ func establishConnection() (err error) {
 				log.Println(err)
 			}
 
-			if reader == "*1\r\n$4\r\nPING\r\n" {
+			data := Deserialize(reader).([]string)
+
+			switch data[0] {
+				
+			case "PING":
 				msg := Serialize("PONG")
 				c.Write([]byte(msg))
-			}
-			if strings.Contains(reader, "ECHO") {
-				data := Deserialize(reader).([]string)
-				if data[0] == "ECHO" {
-					msg := Serialize(data[1])
+
+			case "ECHO":
+				msg := Serialize(data[1])
 					c.Write([]byte(msg))
-				}
-			}
-			if strings.Contains(reader, "SET") {
-				data := Deserialize(reader).([]string)
+
+			case "SET":
 				fredis[data[1]] = data[2]
 				msg := Serialize("OK")
 				c.Write([]byte(msg))

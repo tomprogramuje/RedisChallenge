@@ -28,7 +28,8 @@ func establishConnection() (err error) {
 			if err != nil {
 				log.Println(err)
 			}
-			if strings.HasPrefix(reader, "*1") || strings.HasPrefix(reader, "+"){
+
+			if reader == "*1\r\n$4\r\nPING\r\n" {
 				msg := Serialize("PONG")
 				c.Write([]byte(msg))
 			}
@@ -56,9 +57,6 @@ func readMessage(conn net.Conn) (string, error) {
 		line := scanner.Text()
 		message.WriteString(line)
 		message.WriteString("\r\n")
-		if line == "\r\n" {
-			break
-		}
 	}
 
 	if err := scanner.Err(); err != nil && !errors.Is(err, os.ErrDeadlineExceeded) {

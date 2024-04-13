@@ -12,51 +12,42 @@ func TestServer(t *testing.T) {
 			t.Errorf("error starting server: %v", err)
 		}
 	}()
-	time.Sleep(time.Millisecond * 100)
+	time.Sleep(time.Millisecond * 10)
 
-	t.Run("returns PONG after sending PING command", func(t *testing.T) {
-		conn, err := net.Dial("tcp", ":5678")
-		if err != nil {
-			t.Error("could not connect to server: ", err)
-		}
-		defer conn.Close()
-
-		cmd := Serialize("PING")
-		if _, err := conn.Write([]byte(cmd)); err != nil {
-			t.Error("could not write to TCP server")
-		}
-		time.Sleep(time.Millisecond * 50)
-		response, _ := readMessage(conn)
-		
-		got := Deserialize(response)
-		want := "PONG"
-
-		if got != want {
-			t.Errorf("got %s want %s", got, want)
-		}
-	})
-	t.Run("returns message back after sending ECHO command", func(t *testing.T) {
-		conn, err := net.Dial("tcp", ":5678")
-		if err != nil {
-			t.Error("could not connect to server: ", err)
-		}
-		defer conn.Close()
-
-		cmd := Serialize([]string{"ECHO", "Hello World!"})
-		if _, err := conn.Write([]byte(cmd)); err != nil {
-			t.Error("could not write to TCP server")
-		}
-		time.Sleep(time.Millisecond * 50)
-		response, err := readMessage(conn)
-		if err != nil {
-			t.Error(err)
-		}
-
-		got := Deserialize(response)
-		want := "Hello World!"
-
-		if got != want {
-			t.Errorf("got %s want %s", got, want)
-		}
-	})
+	cases := []struct {
+		Description string
+		Command []string 
+		Want string
+	}{
+		{"returns PONG after sending PING command", []string{"PING"}, "PONG"},
+		{"returns message back after sending ECHO command", []string{"ECHO", "Hello World!"}, "Hello World!"},
+		{"returns OK after SET command", []string{"SET", "Name", "John"}, "OK"},
+	}
+	
+	for _, test := range cases {
+		t.Run(test.Description, func(t *testing.T) {
+			conn, err := net.Dial("tcp", ":5678")
+			if err != nil {
+				t.Error("could not connect to server: ", err)
+			}
+			defer conn.Close()
+	
+			cmd := Serialize(test.Command)
+			if _, err := conn.Write([]byte(cmd)); err != nil {
+				t.Error("could not write to TCP server")
+			}
+			time.Sleep(time.Millisecond * 10)
+			response, err := readMessage(conn)
+			if err != nil {
+				t.Error(err)
+			}
+	
+			got := Deserialize(response)
+			want := test.Want
+	
+			if got != test.Want {
+				t.Errorf("got %s want %s", got, want)
+			}
+		})
+	}
 }

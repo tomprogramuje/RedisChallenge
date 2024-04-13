@@ -11,6 +11,7 @@ import (
 )
 
 func establishConnection() (err error) {
+	fredis := make(map[string]any)
 	l, err := net.Listen("tcp", ":5678")
 	if err != nil {
 		return
@@ -33,12 +34,18 @@ func establishConnection() (err error) {
 				msg := Serialize("PONG")
 				c.Write([]byte(msg))
 			}
-			if strings.HasPrefix(reader, "*") {
+			if strings.Contains(reader, "ECHO") {
 				data := Deserialize(reader).([]string)
 				if data[0] == "ECHO" {
 					msg := Serialize(data[1])
 					c.Write([]byte(msg))
 				}
+			}
+			if strings.Contains(reader, "SET") {
+				data := Deserialize(reader).([]string)
+				fredis[data[1]] = data[2]
+				msg := Serialize("OK")
+				c.Write([]byte(msg))
 			}
 		}(conn)
 	}

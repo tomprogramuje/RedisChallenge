@@ -10,44 +10,85 @@ import (
 	"time"
 )
 
-func establishConnection() (err error) {
-	fredis := make(map[string]any)
-	l, err := net.Listen("tcp", ":5678")
+type Fredis map[string]any
+
+func NewFredis() Fredis {
+	return Fredis{}
+}
+
+type TCPServer struct {
+	addr    string
+	storage Fredis
+	server  net.Listener
+}
+
+type Server interface {
+	Run() error
+	Close() error
+}
+
+func NewServer(addr string, storage Fredis) *TCPServer {
+	server := new(TCPServer)
+
+	server.addr = addr
+	server.storage = storage
+
+	return server
+}
+
+func (t *TCPServer) Run() (err error) {
+	t.server, err = net.Listen("tcp", t.addr)
 	if err != nil {
-		return
+		return err
 	}
-	defer l.Close()
+
+	defer t.server.Close()
+
 	for {
-		conn, err := l.Accept()
+		conn, err := t.server.Accept()
 		if err != nil {
-			log.Fatal(err)
+			log.Println("could not accept connection:", err)
+			break
 		}
 
-		go func(c net.Conn) {
-			defer c.Close()
-			reader, err := readMessage(c)
-			if err != nil {
-				log.Println(err)
-			}
+		go t.handleConnection(conn)
+	}
 
-			data := Deserialize(reader).([]string)
+	return nil
+}
 
-			switch data[0] {
-				
-			case "PING":
-				msg := Serialize("PONG")
-				c.Write([]byte(msg))
+func (t *TCPServer) Close() (err error) {
+	return t.server.Close()
+}
 
-			case "ECHO":
-				msg := Serialize(data[1])
-					c.Write([]byte(msg))
+func (t *TCPServer) handleConnection(conn net.Conn) {
+	defer conn.Close()
 
-			case "SET":
-				fredis[data[1]] = data[2]
-				msg := Serialize("OK")
-				c.Write([]byte(msg))
-			}
-		}(conn)
+	reader, err := readMessage(conn)
+	if err != nil {
+		log.Println(err)
+	}
+
+	data := Deserialize(reader).([]string)
+
+	switch data[0] {
+
+	case "PING":
+		msg := Serialize("PONG")
+		conn.Write([]byte(msg))
+
+	case "ECHO":
+		msg := Serialize(data[1])
+		conn.Write([]byte(msg))
+
+	case "SET":
+		t.storage[data[1]] = data[2]
+		msg := Serialize("OK")
+		conn.Write([]byte(msg))
+
+	case "GET":
+		msg := Serialize(t.storage["Name"])
+		conn.Write([]byte(msg))
 	}
 }
 
